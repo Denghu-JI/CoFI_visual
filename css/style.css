@@ -1,0 +1,35 @@
+html, body {  
+    margin: 0;
+    padding: 0;
+    background-color: rgb(39, 43, 77);
+  }
+  .node {
+    cursor: pointer;
+  }
+  
+  .node circle {
+  }
+  
+  .node text {
+    font: 10px sans-serif;
+  }
+  
+  .link {
+    fill: none;
+    stroke: rgb(55, 68, 105);
+    stroke-width: 1px;
+  }
+
+  .nodeCard {
+    border: 1px solid black;
+    background-color: lightgray;
+  }
+  
+  .nodeName {
+    margin: 5px;
+  }
+  
+  .nodeButton {
+    margin: 5px;
+  }
+  
