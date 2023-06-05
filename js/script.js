@@ -123,9 +123,6 @@ nodeEnter.each(function(d,i){
     }
   })
 
-
-
-
 nodeEnter
   .attr("class", "node")
   .attr("r", 1e-6)
