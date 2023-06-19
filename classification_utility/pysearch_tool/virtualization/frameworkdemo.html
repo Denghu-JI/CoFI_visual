@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Collapsible Sidebar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #83a4d4, #b6fbff);
+    }
+
+    /* Navigation Bar Styles */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 200px;
+      height: 100%;
+      background-color: #333;
+      padding: 20px;
+      overflow-x: hidden;
+      transition: width 0.3s;
+    }
+
+    .nav.collapsed {
+      width: 0;
+      padding: 0;
+    }
+
+    .nav a {
+      display: block;
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
+      margin-bottom: 20px;
+      padding: 8px;
+      border-radius: 4px;
+    }
+
+    .nav a:hover {
+      background-color: #4CAF50;
+    }
+
+    .nav h2 {
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      margin: 0 0 20px 0;
+    }
+
+    /* Divider Styles */
+    .divider {
+      height: 1px;
+      background-color: #4CAF50;
+      margin-bottom: 20px;
+    }
+
+    /* Toggle Button Styles */
+    .toggle-btn {
+      position: fixed;
+      top: 10px;
+      left: 220px;
+      cursor: pointer;
+      font-size: 30px;
+      color: white;
+      z-index: 1;
+      transition: left 0.3s;
+    }
+
+    .toggle-btn.collapsed {
+      left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <div class="nav" id="nav">
+    <h2>Classification</h2>
+    <div class="divider"></div>
+    <a href="homepageupdate01.html">Classification</a>
+    <a href="https://inlab.edu.au">InLab Home</a>
+    <a href="https://inlab.edu.au/community/">CoFI</a>
+    <a href="https://colab.research.google.com/github/inlab-geo/cofi-examples/blob/main/index.ipynb">CoFI Examples</a>
+    <a href="https://inlab.edu.au/espresso/">Espresso</a>
+  </div>
+
+  <!-- Toggle Button -->
+  <span class="toggle-btn" id="toggle-btn">&larr;</span>
+
+  <script>
+    const nav = document.getElementById("nav");
+    const toggleBtn = document.getElementById("toggle-btn");
+
+    toggleBtn.addEventListener("click", () => {
+      nav.classList.toggle("collapsed");
+      toggleBtn.classList.toggle("collapsed");
+      toggleBtn.textContent = nav.classList.contains("collapsed") ? "☰" : "←";
+    });
+  </script>
+</body>
+</html>

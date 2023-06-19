@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>treeComponent</title>
+    <script type="text/javascript">
+        function getBackend() {
+            // Send a request to the backend API to fetch the methods list based on the description
+            var description = sessionStorage.getItem('searchkey'); 
+            /*tree_app = loadJSON('https://jsonofthetree.s3.ap-southeast-2.amazonaws.com/data-apps.json')  
+            fetch(`/api/methods?description=${encodeURIComponent(description)}`)
+            .then(response => response.json()) //Convert the response to JSON
+            .then(methods =>{
+            //Get the unordered list element for the methods
+            const methodsList = document.getElementById("methods");
+            //Clear the list content
+            methodsList.innerHTML = "";
+            //Iterate through the fetched methods list
+            methods.forEach(method => {
+            //Create a new list item element
+            const item = document.createElement("li");
+            //Set the list item content to the method name
+            item.textContent = method.name;
+            //Append the newly created list item to the methods list
+            methodList.appendChild(item);});}) 
+            //Catch the potential error
+            .catch(error => console.error(error)) */
+        if (description == ""){
+            alert("no keyword provided")
+        }
+        else{
+            alert(description)
+        }   
+        }
+        window.onload = getBackend;
+        </script>
+</head>
+<!-- Add un-tree js -->
+<script src="./un-tree.min.js"></script>
+<script src="./jquery.js"></script>
+<script src="./html2canvas.min.js"></script>
+
+<body>
+    <!-- Load button, for testing -->
+    <input type="button" title="Load Tree" value="Load Tree" onclick="loading()" />
+    <!-- The id value of the currently selected node Node -->
+    <input type="hidden" id="choosenNodeValue" />
+    <!-- Current selected node display area -->
+    <div>
+        <h2>Currently selected node：<span id="choosenNode"></span></h2>
+    </div>
+    <!-- Tree structure content -->
+    <div id="un-tree--wrapper"></div>
+    <!-- Right side display -->
+    <div id="guide-map"></div>
+
+</body>
+<style>
+    #un-tree--wrapper {
+        width: 800px;
+        height: auto;
+        padding: 10px;
+        outline: 1px solid grey;
+    }
+
+    .un-org-tree--wrapper .un-org-tree.vertical .un-org-tree-item>span {
+        display: inline-block;
+        margin-bottom: 40px;
+        background-color: green;
+        position: relative;
+        border: 1px solid #888;
+        border-radius: 10px;
+    }
+
+    #guide-map {
+        width: 300px;
+        height: 250px;
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        outline: 1px solid grey;
+    }
+
+    #guide-map-img {
+        width: 250px;
+    }
+</style>
+<script type="text/javascript">
+
+
+
+    // Default data for the test
+    let data = [
+        {"id": "37 Earth Sciences", "text": "37 Earth Sciences", "parent": "root", "children": []}, 
+	{"id": "3707 Hydrology", "text": "3707 Hydrology", "parent": "37 Earth Sciences", "children": []}, 
+	{"id": "3706 Geophysics", "text": "3706 Geophysics", "parent": "37 Earth Sciences", "children": []},
+	{"id": "370703 Groundwater Hydrology", "text": "370703 Groundwater Hydrology", "parent": "3707 Hydrology", "children": []}, 
+	{"id": "370602 Electrical And Electromanetic Methods In Geophysics", "text": "370602 Electrical And Electromanetic Methods In Geophysics", "parent": "3706 Geophysics", "children": []}, 
+	{"id": "370606 Gravimetrics", "text": "370606 Gravimetrics", "parent": "3706 Geophysics", "children": []}, 
+	{"id": "370609 Seismology And Seismic Exploration", "text": "370609 Seismology And Seismic Exploration", "parent": "3706 Geophysics", "children": []},
+	{"id": "370609 Seismology And Seismic Exploration-> Xray Tracer", "text": "370609 Seismology And Seismic Exploration-> Xray Tracer", "parent": "3706 Geophysics", "children": []}, 
+	{"id": "Slug Test", "text": "Slug Test", "parent": "370703 Groundwater Hydrology", "children": []}, 
+	{"id": "Pumping Test", "text": "Pumping Test", "parent": "370703 Groundwater Hydrology", "children": []}, 
+	{"id": "3D gravity", "text": "3D gravity", "parent": "370606 Gravimetrics", "children": []},
+        {"id": "Fast Marching Method", "text": "Fast Marching Method", "parent": "370609 Seismology And Seismic Exploration", "children": []}, 		
+	{"id": "Magnetotelluric", "text": "Magnetotelluric", "parent": "370602 Electrical And Electromanetic Methods In Geophysics", "children": []}, 
+	{"id": "Magnetotelluric_1D", "text": "Magnetotelluric_1D", "parent": "Magnetotelluric", "children": []},
+    ];
+
+    //Default data, take the data whose parent is root
+    let defaultData;
+
+    //Get to the DOM element of the tree
+    let treeEle = document.getElementById("un-tree--wrapper");
+    //The diagram of navigation shows
+    var guideMap = document.getElementById('guide-map');
+
+
+    function loadingGuideMap() {
+        //Clear the right-hand navigation first
+        var img = document.getElementById('guide-map-img');
+        if (img) {
+            img.remove();
+        }
+        // Get the DOM element to be converted into an image
+        var domEle = document.getElementById("guide-map");
+        //Get the latest tree data
+        var targetDom = document.getElementById("un-tree--wrapper");
+        // Converting DOM to canvas using html2canvas
+        html2canvas(targetDom).then(function (canvas) {
+            //Get the base64 of the image
+            var dataURL = canvas.toDataURL('image/png');
+            var imgDom = '<img id="guide-map-img" src="' + dataURL + '" />';
+            guideMap.innerHTML = imgDom;
+        });
+    }
+
+
+    // Loading tree method
+    function loading() {
+        defaultData = [];
+        // Get the default tree top node data
+        let topNode = getSubNodeList('root', null);
+        //Note here that a tree has only one top node, and if more than one is obtained, it is considered wrong data and is not allowed to build the tree
+        if (topNode.length > 1) {
+            alert("Build tree error with multiple tree top nodes！")
+            return;
+        }
+        defaultData = topNode;
+        //Build a tree
+        rebuildTree(defaultData);
+        //Load the map in the lower right corner
+        loadingGuideMap();
+    }
+
+    // Tree node click method
+    function handleClick(itemId, itemData, itemNode) {
+        //Simulate calling the interface to get node child data
+        let subNodeList = getSubNodeList(itemId, itemData);
+        //Call to rebuild the tree
+        rebuildTree(subNodeList);
+        //Set the current selected node content display
+        var chooseNode = document.getElementById('choosenNode');
+        chooseNode.innerHTML = itemData['text']
+        var choosenNodeValue = document.getElementById('choosenNodeValue');
+        choosenNodeValue.setAttribute('value', itemData['id']);
+        //Set the currently selected node's area red box checked
+        var e = document.getElementById('node-' + itemId);
+        e.style.backgroundColor = 'pink';
+        e.style.opacity = '85%';
+        e.style.border = '1px solid red';
+        e.style.padding = '10px';
+        //Refresh the right navigation map
+        loadingGuideMap();
+    }
+
+    // Simulate calling the interface to get the child node data of the node
+    function getSubNodeList(parentId, nodeData) {
+        // Define a child node data
+        let subNode = defaultData;
+        let subNodeCount = 0;
+        for (let i = 0; i < data.length; i++) {
+            const d = data[i];
+            //Get all the subordinate node data of the selected node and add it to the subset of the selected node, if the node already exists then do not add it
+            if (d['parent'] == parentId && subNode.indexOf(d) < 0) {
+                subNode.push(d);
+                subNodeCount++;
+            }
+        }
+        // Determine if the node has children, and if not, prompt for them
+        var choosenNodeValue = document.getElementById('choosenNodeValue').value;
+        if (subNodeCount == 0 && choosenNodeValue != parentId) {
+            alert("Node：“" + nodeData['text'] + "”No child node data！")
+        }
+        return subNode;
+    }
+
+    // Rebuild the tree method
+    function rebuildTree(treeData) {
+        new UNTree({
+            el: treeEle,
+            jsonArr: treeData, // Data for building the tree
+            parentld: "root", // The default parent of the root node is root
+            type: "list",// Use array format data by default
+            viewClass: "view-demo", // The css style class of the tree node, fixed
+            itemClass: "item-demo", // The css style class of the tree node, fixed
+            click: handleClick, // Methods called by node click
+        });
+    }
+
+</script>
+
+</html>

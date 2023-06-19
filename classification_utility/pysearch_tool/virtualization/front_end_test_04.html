@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>test01</title>
+  <!-- Add styles to define the appearance of the page-->
+  <style>
+    /* Set the font, backgroud, and layout for the entire body */
+.font > p{
+  font-size: 80px;
+  text-shadow: 0 0 2px black;
+  color: linear-gradient(135deg, #83a4d4, #b6fbff);
+  margin-top: -330px;
+  margin-left: -560px;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #83a4d4, #b6fbff);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+/* Set the style for the container div */
+.container {
+  background-color: white;
+  padding: 40px;
+  border-radius: 10px;
+  width: 400px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Set the style for the h1 element */
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+/* Set the style for the label element */
+label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+/* Set the style for the input[type="text"] element */
+input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Set the style for the input[type="text"]:focus */
+input[type="text"]:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.3);
+}
+
+/* Set the style for the button element */
+button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+/* Set the style for the button:hover */
+button:hover {
+  background-color: #3e8e41;
+}
+
+/* Set the style for the hr element */
+hr {
+  border: 1px solid #f1f1f1;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Project Description</h1>
+    <label for="description">Please enter the description of the project: </label>
+    <!-- Input field for entering project description -->
+    <input type="text" id="description" name="description">
+    <hr>
+    <!-- Button to call the callBackend function -->
+    <button onclick="callBackend()">Return the Methods Tree</button>                                                       
+    <hr>
+    <!-- Redirect to the Github -->
+    <form action="https://github.com/Denghu-JI/2023-S1_problem_classification" method="get">
+      <button type="submit">Our Code </button>
+    </form>
+  </div>
+
+  <div class="font">
+    <p>
+      <i>CLASSIFICATION</i><br>
+    </p>
+  </div>
+
+  <!-- Create an unordered list to display the methods list -->
+  <ul id = "methods"></ul>
+
+  <img src="InLabLogo.webp" alt="InLab LOGO" width="150" height="50" style="position
+  :relative; margin-top: -570px;">
+  <img src="COFIandEspresso.jpeg" alt="COFIandEspresso Picture" width="290" height="290" style="position
+  :relative; margin-left: -280px; margin-bottom: -120px;">
+
+  <!-- Add JavaScript code to handle button click event and fetch methods list from the backend -->
+  <script>
+    //define the callBackedn() function
+    function callBackend() {
+      // Get the value of the input field and assign it to the description variable
+      const description = document.getElementById("description").value;
+
+      // Send a request to the backend API to fetch the methods list based on the description    
+      fetch(`/api/methods?description=${encodeURIComponent(description)}`)
+      .then(response => response.json()) //Convert the response to JSON
+      .then(methods =>{
+        //Get the unordered list element for the methods
+        const methodsList = document.getElementById("methods");
+        //Clear the list content
+        methodsList.innerHTML = "";
+
+        //Iterate through the fetched methods list
+        methods.forEach(method => {
+          //Create a new list item element
+          const item = document.createElement("li");
+          //Set the list item content to the method name
+          item.textContent = method.name;
+          //Append the newly created list item to the methods list
+          methodList.appendChild(item);
+        });
+      }) 
+      //Catch the potential error
+      .catch(error => console.error(error))
+    }
+  </script>                                                            
+</body>
+</html>
