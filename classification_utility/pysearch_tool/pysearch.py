@@ -2,7 +2,7 @@
 #import subprocess
 #(might delete if never used) import pathlib
 import os
-
+import ast
 
 class pysearch:
     def __init__(self, methods_path, app_path, prob_path):
@@ -25,6 +25,7 @@ class pysearch:
         self._prob_path = prob_path
         self._methods = []
         self._apps = []
+        self._problems = []
 
     def mds(self):
         return self._methods
@@ -108,6 +109,25 @@ class pysearch:
                 for dirr in dirs:
                     parse(self._app_path + '/' + dirr + '/' + dirr + '.py')
 
+    def search_examples(self, ignore):
+        for root, _, files in os.walk(self._prob_path):
+            for file_name in files:
+                if file_name.endswith(".py"):
+                    if file_name not in ignore:
+                        file_path = os.path.join(root, file_name)
+                        description = self.parse_description(file_path)
+                        self._problems.append(Example(file_name, file_path, description))
+
+    def parse_description(self, file_path):
+        with open(file_path) as file:
+            content = file.read()
+
+        tree = ast.parse(content)
+        docstrings = ast.get_docstring(tree)
+        return docstrings if docstrings else ""
+
+    def problems(self):
+        return self._problems
         
 class Method:
     def __init__(self, name, path, tree, des):
@@ -172,6 +192,20 @@ class App:
         return self._des
             
 
+class Example:
+    def __init__(self, name, path, description):
+        self._name = name
+        self._path = path
+        self._description = description
+    
+    def name(self):
+        return self._name
+    
+    def path(self):
+        return self._path
+    
+    def description(self):
+        return self._description
 
     
 if __name__ == "__main__": 
@@ -182,3 +216,11 @@ if __name__ == "__main__":
 
     p = pysearch(methods_path, applications_path, problems_path)
     p._search()
+    p.search_examples(ignore_list)
+    problems = p.problems()
+
+    for problem in problems:
+        print("Name:", problem.name())
+        print("Path:", problem.path())
+        print("Description:", problem.description())
+        print()
