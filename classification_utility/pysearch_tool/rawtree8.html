@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>a raw tree</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <style>
+        body {
+            font-family: "Arial", sans-serif;
+            background-color: #4da1a9; 
+        }
+
+        .node circle {
+            fill: #4caf50;
+            stroke: #2d3a6a;
+            stroke-width: 4px;
+            r: 20;
+        }
+
+        .node text {
+            font: 14px sans-serif;
+            text-anchor: middle;
+            fill: #ffffff;
+        }
+
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 2px;
+        }
+
+        .button {
+            fill: #6b88ff;
+            stroke: #fff;
+            stroke-width: 1px;
+            cursor: pointer;
+            opacity: 0.8;
+        }
+
+        .button:hover {
+            opacity: 1;
+        }
+
+        .button text {
+            font: 10px sans-serif;
+            fill: #fff;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <script>
+    const data = {
+        "name": "CoFI - Common Framework for Inference",
+        "children": [
+            {
+                "name": "Parameter estimation",
+                "children": [
+                    { "name": "Matrix based solvers",
+                    "children":[{"name": "Linear system solvers"}] },
+                    { "name": "Optimization",
+                    "children": [{"name":"Non linear"},
+                        {"name":"Linear"}] }
+                ]
+            },
+            {
+                "name": "ensemble methods",
+                "children": [
+                    { "name": "Direct Search",
+                    "children": [{"name":"Monte Carlo"},
+                        {"name":"Deterministic"}] },
+                    { "name": "Bayesian Sampling",
+                    "children": [{"name":"McMC samplers"}, {"name":"Trans-D McMC"}] }
+                ]
+            }
+        ]
+    };
+
+    const margin = {top: 20, right: 20, bottom: 20, left: 20};
+    const width = window.innerWidth - margin.left - margin.right;
+    const height = window.innerHeight - margin.top - margin.bottom;
+
+    const svg = d3.select("body").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .style("border", "1px solid #ccc")
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    const tree = d3.tree().size([width - 160, height]);
+    const root = d3.hierarchy(data);
+    tree(root);
+
+    function updateButtons(node) {
+        node.each(d => {
+            const buttonGroup = d3.select(d.group);
+
+            if (d.children || d._children) {
+                buttonGroup.select(".expand-button").remove();
+                buttonGroup.select(".collapse-button").remove();
+
+                if (!d.children) {
+                    buttonGroup.append("rect")
+                        .attr("class", "button expand-button")
+                        .attr("width", 40)
+                        .attr("height", 20)
+                        .on("click", function () {
+                            if (!d.children && d._children) {
+                                d.children = d._children;
+                                d._children = null;
+                                update();
+                            }
+                        });
+
+                    buttonGroup.append("text")
+                        .attr("class", "expand-button")
+                        .attr("x", 20)
+                        .attr("y", 14)
+                        .text("+");
+                } else {
+                    buttonGroup.append("rect")
+                        .attr("class", "button collapse-button")
+                        .attr("width", 40)
+                        .attr("height", 20)
+                        .attr("x", 45)
+                        .on("click", function () {
+                            if (d.children) {
+                                d._children = d.children;
+                                d.children = null;
+                                update();
+                            }
+                        });
+
+                    buttonGroup.append("text")
+                        .attr("class", "collapse-button")
+                        .attr("x", 65)
+                        .attr("y", 14)
+                        .text("-");
+                }
+            }
+        });
+    }
+
+    function update() {
+        svg.selectAll(".link").remove();
+        svg.selectAll(".node").remove();
+
+        const link = svg.selectAll(".link")
+            .data(root.links())
+            .enter().append("path")
+            .attr("class", "link")
+            .attr("d", d => `
+                M${d.source.x},${d.source.y}
+                C${d.source.x},${(d.source.y + d.target.y) / 2}
+                ${d.target.x},${(d.source.y + d.target.y) / 2}
+                ${d.target.x},${d.target.y}`);
+
+        const node = svg.selectAll(".node")
+            .data(root.descendants())
+            .enter().append("g")
+            .attr("class", "node")
+            .attr("transform", d => `translate(${d.x},${d.y})`);
+
+        node.append("circle")
+            .attr("r", 15);
+
+        node.append("text")
+            .attr("dy", 5)
+            .text(d => d.data.name);
+
+        const buttonGroup = node.filter(d => d.children || d._children)
+            .append("g")
+            .attr("transform", "translate(-22, 30)")
+            .each(function (d) {
+                d.group = this;
+            });
+
+        updateButtons(node);
+    }
+
+    update();
+</script>
+
+</body>
+</html>
