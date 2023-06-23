@@ -2,9 +2,6 @@
 #import subprocess
 #(might delete if never used) import pathlib
 import os
-import ast
-from lxml import etree,html
-import xml.etree.ElementTree as ET
 
 class pysearch:
     def __init__(self, methods_path, app_path, prob_path):
@@ -214,66 +211,19 @@ class TreeNode:
     def __init__(self, name):
         self.name = name
         self.children = []
+        self.examples = []
+
         
     def add_child(self, child):
         self.children.append(child)
-        
-    def is_leaf(self):
-        return len(self.children) == 0        
 
+    def add_example(self, example):
+        self.examples.append(example)
 
-def find_leaf_nodes(tree):
-    if tree.is_leaf():
-        return [tree.name]
-    leaf_nodes = []
-    for child in tree.children:
-        leaf_nodes.extend(find_leaf_nodes(child))
-    return leaf_nodes
-
-
-def build_tree():
-    root = TreeNode("CoFI - Common Framework for Inference")
-
-    param_estimation = TreeNode("Parameter estimation")
-    root.add_child(param_estimation)
-
-    matrix_based_solvers = TreeNode("Matrix based solvers")
-    param_estimation.add_child(matrix_based_solvers)
-
-    linear_system_solvers = TreeNode("Linear system solvers")
-    matrix_based_solvers.add_child(linear_system_solvers)
-
-    optimization = TreeNode("Optimization")
-    param_estimation.add_child(optimization)
-
-    non_linear = TreeNode("Non linear")
-    optimization.add_child(non_linear)
-
-    linear = TreeNode("Linear")
-    optimization.add_child(linear)
-
-    ensemble_methods = TreeNode("Ensemble methods")
-    root.add_child(ensemble_methods)
-
-    direct_search = TreeNode("Direct Search")
-    ensemble_methods.add_child(direct_search)
-
-    monte_carlo = TreeNode("Monte Carlo")
-    direct_search.add_child(monte_carlo)
-
-    deterministic = TreeNode("Deterministic")
-    direct_search.add_child(deterministic)
-
-    bayesian_sampling = TreeNode("Bayesian Sampling")
-    ensemble_methods.add_child(bayesian_sampling)
-
-    mcmc_samplers = TreeNode("McMC samplers")
-    bayesian_sampling.add_child(mcmc_samplers)
-
-    trans_d_mcmc = TreeNode("Trans-D McMC")
-    bayesian_sampling.add_child(trans_d_mcmc)
-
-    return root
+    def traverse(self):
+        yield self
+        for child in self.children:
+            yield from child.traverse()       
 
 
 def print_tree(node, indent=""):
@@ -290,14 +240,68 @@ def print_tree(node, indent=""):
         print_tree(child, indent + "  ")
         
 
-def map_examples_to_leaf_nodes(node, mappings):
-    if node.name in mappings:
-        examples = mappings[node.name]
-        node.children = [TreeNode((example[0], example[1], example[2])) for example in examples]
-    else:
-        for child in node.children:
-            map_examples_to_leaf_nodes(child, mappings)
+def add_examples_to_tree(root_node, example_objects):
+    for example in example_objects:
+        description = example.description()
+        for node in root_node.traverse():
+            if node.name in description:
+                node.add_example(example)
+    return root_node
             
+def build_tree_from_lists(tree_lists):
+    root = None
+    node_dict = {}
+
+    for tree_list in tree_lists:
+        parent_name = tree_list[0]
+
+        if parent_name not in node_dict:
+            parent_node = TreeNode(parent_name)
+            node_dict[parent_name] = parent_node
+
+            if root is None:
+                root = parent_node
+        else:
+            parent_node = node_dict[parent_name]
+
+        for node_name in tree_list[1:]:
+            if node_name not in node_dict:
+                node = TreeNode(node_name)
+                node_dict[node_name] = node
+            else:
+                node = node_dict[node_name]
+
+            # Check if the node already exists as a child
+            existing_child = next((child for child in parent_node.children if child.name == node_name), None)
+            if existing_child:
+                parent_node = existing_child
+            else:
+                parent_node.add_child(node)
+                parent_node = node
+
+    return root
+
+
+def add_examples_to_tree(root_node, example_objects):
+    for example in example_objects:
+        description = example.description().lower()  # Convert to lowercase
+        for node in root_node.traverse():
+            node_name_lower = node.name.lower()
+            if node_name_lower in description or node_name_lower + 's' in description:
+                node.add_example(example)
+                break  # Exit the inner loop after finding a match
+    return root_node
+
+
+def print_tree(root_node, indent=''):
+    print(f"{indent}{root_node.name}")
+    for child in root_node.children:
+        print_tree(child, indent + '  ')
+    if root_node.examples:
+        for example in root_node.examples:
+            print(f"{indent}  Example: {example.name()} ({example.path()})")
+            print(f"{indent}    Description: {example.description()}")
+
             
     
 if __name__ == "__main__": 
@@ -305,58 +309,18 @@ if __name__ == "__main__":
     applications_path = "espresso/contrib"
     problems_path = "cofi-examples/examples"
     ignore_list = ['__init__.py', '_base_inference_tool.py']
+    tree_lists = []
 
     p = pysearch(methods_path, applications_path, problems_path)
     p._search()
     p.search_examples(ignore_list)
     problems = p.problems()
     
-
-    # Build the tree
-    root_node = build_tree()
-
-    # Print the tree
-    #print_tree(root_node)
     
-   
-    # for problem in problems:
-    #     print("Name:", problem.name())
-    #     print("Path:", problem.path())
-    #     print("Description:", problem.description())
-    #     print()
-    
-    # Find the leaf nodes
-    leaf_nodes = find_leaf_nodes(root_node)
+    for method in p._methods:
+        tree_lists.append(method.tree())
 
-    # # Print the leaf nodes
-    # for leaf_node in leaf_nodes:
-    #     print(leaf_node)
-
-
-
-    mappings = {leaf_node: [] for leaf_node in leaf_nodes}
-
-    for example in problems:
-        description = example.description()
-        if "linear system solver" in description.lower():
-            mappings["Linear system solvers"].append((example.name(), example.path(), example.description()))
-        elif "non-linear" in description.lower():
-            mappings["Non linear"].append((example.name(), example.path(), example.description()))
-        elif "linear" in description.lower():
-            mappings["Linear"].append((example.name(), example.path(), example.description()))
-        elif "monte carlo" in description.lower():
-            mappings["Monte Carlo"].append((example.name(), example.path(), example.description()))
-        elif "deterministic" in description.lower():
-            mappings["Deterministic"].append((example.name(), example.path(), example.description()))
-        elif "emcee" in description.lower():
-            mappings["McMC samplers"].append((example.name(), example.path(), example.description()))
-        elif "trans-d" in description.lower():
-            mappings["Trans-D McMC"].append((example.name(), example.path(), example.description()))
-
-
-
-    # Map the examples to the leaf nodes
-    map_examples_to_leaf_nodes(root_node, mappings)
-
-    # Print the updated tree structure
+    root_node = build_tree_from_lists(tree_lists)
+    add_examples_to_tree(root_node, problems)
     print_tree(root_node)
+    
