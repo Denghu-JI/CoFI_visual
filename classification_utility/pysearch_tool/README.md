@@ -17,7 +17,7 @@ from pysearch import pysearch
 method_path = "path/to/methods"
 app_path = "path/to/applications"
 prob_path = "path/to/problems"
-'''
+
 
 # Create an instance of the pysearch class
 p = pysearch(method_path, app_path, prob_path)
