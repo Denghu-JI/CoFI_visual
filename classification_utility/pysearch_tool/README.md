@@ -1,4 +1,4 @@
-pysearch
+# pysearch
 pysearch is a Python module that allows you to search and extract information from code files in specified directories. It provides functionality to search for inference methods, applications, and example problems, and organize them in a hierarchical tree structure.
 
 Installation
@@ -10,14 +10,17 @@ Usage
 Initializing pysearch
 To use pysearch, you need to import the module and create an instance of the pysearch class. Here's an example:
 
-python
-Copy code
+'''python
 from pysearch import pysearch
 
 # Specify the paths to the method, application, and problem directories
 method_path = "path/to/methods"
 app_path = "path/to/applications"
-prob_path = "path/to/problems"
+prob_path = "path/to/problems"'''
+
+# Create an instance of the pysearch class
+p = pysearch(method_path, app_path, prob_path)
+
 
 # Create an instance of the pysearch class
 p = pysearch(method_path, app_path, prob_path)
