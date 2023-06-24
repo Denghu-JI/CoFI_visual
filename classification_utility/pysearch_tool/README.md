@@ -12,13 +12,13 @@ To use pysearch, you need to import the module and create an instance of the pys
 
 '''
 
-    from pysearch import pysearch
+from pysearch import pysearch
 
 # Specify the paths to the method, application, and problem directories
 method_path = "path/to/methods"
 app_path = "path/to/applications"
 prob_path = "path/to/problems"
-
+'''
 
 # Create an instance of the pysearch class
 p = pysearch(method_path, app_path, prob_path)
