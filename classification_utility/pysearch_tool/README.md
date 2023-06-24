@@ -10,7 +10,8 @@ Usage
 Initializing pysearch
 To use pysearch, you need to import the module and create an instance of the pysearch class. Here's an example:
 
-'''python
+'''
+
     from pysearch import pysearch
 
 # Specify the paths to the method, application, and problem directories
