@@ -38,6 +38,9 @@ p.search(ignore_list)
 # Retrieve the found methods and applications
 methods = p.mds()  # List of found methods
 applications = p.aps()  # List of found applications
+
+```
+
 Searching for Example Problems
 You can search for example problems using the search_examples method. Similar to the search method, the search_examples method also takes an optional ignore parameter to ignore specific files during the search.
 
