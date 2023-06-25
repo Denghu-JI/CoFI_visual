@@ -17,25 +17,24 @@ from pysearch import pysearch
 method_path = "path/to/methods"
 app_path = "path/to/applications"
 prob_path = "path/to/problems"
+# Create an instance of the pysearch class
+p = pysearch(method_path, app_path, prob_path)
+
 ```
 
-# Create an instance of the pysearch class
-p = pysearch(method_path, app_path, prob_path)
 
-
-# Create an instance of the pysearch class
-p = pysearch(method_path, app_path, prob_path)
-Searching for Methods and Applications
+# Searching for Methods and Applications
 You can search for inference methods and applications using the search method. The search method takes an optional ignore parameter, which is a list of files to ignore during the search.
 
 Here's an example of searching for methods and applications:
 
-python
+```python
 Copy code
 # Search for methods and applications
 ignore_list = ['__init__.py', '_base_inference_tool.py']  # Files to ignore
 p.search(ignore_list)
 
+```
 # Retrieve the found methods and applications
 methods = p.mds()  # List of found methods
 applications = p.aps()  # List of found applications
