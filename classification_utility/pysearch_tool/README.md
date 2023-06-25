@@ -34,7 +34,6 @@ Copy code
 ignore_list = ['__init__.py', '_base_inference_tool.py']  # Files to ignore
 p.search(ignore_list)
 
-```
 # Retrieve the found methods and applications
 methods = p.mds()  # List of found methods
 applications = p.aps()  # List of found applications
