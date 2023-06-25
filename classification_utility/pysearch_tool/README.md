@@ -10,6 +10,11 @@ Usage
 Initializing pysearch
 To use pysearch, you need to import the module and create an instance of the pysearch class. Here's an example:
 
+```python
+number = input("What is your favourite number?")
+print("It is", number + 1)  # error: Unsupported operand types for + ("str" and "int")
+```
+
 '''
 
 from pysearch import pysearch
