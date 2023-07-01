@@ -2,6 +2,7 @@
 #import subprocess
 #(might delete if never used) import pathlib
 import os
+import ast
 
 class pysearch:
     def __init__(self, methods_path, app_path, prob_path):
@@ -196,15 +197,23 @@ class Example:
         self._name = name
         self._path = path
         self._description = description
-    
+        self._tree_path = ""
+
     def name(self):
         return self._name
-    
+
     def path(self):
         return self._path
-    
+
     def description(self):
         return self._description
+
+    def tree_path(self):
+        return self._tree_path
+
+    def set_tree_path(self, tree_path):
+        self._tree_path = tree_path
+
 
     
 class TreeNode:
@@ -212,10 +221,11 @@ class TreeNode:
         self.name = name
         self.children = []
         self.examples = []
+        self.parent = None
 
-        
     def add_child(self, child):
         self.children.append(child)
+        child.parent = self
 
     def add_example(self, example):
         self.examples.append(example)
@@ -223,7 +233,7 @@ class TreeNode:
     def traverse(self):
         yield self
         for child in self.children:
-            yield from child.traverse()       
+            yield from child.traverse()      
 
 
 def print_tree(node, indent=""):
@@ -238,16 +248,8 @@ def print_tree(node, indent=""):
         print(indent + node.name)
     for child in node.children:
         print_tree(child, indent + "  ")
-        
 
-def add_examples_to_tree(root_node, example_objects):
-    for example in example_objects:
-        description = example.description()
-        for node in root_node.traverse():
-            if node.name in description:
-                node.add_example(example)
-    return root_node
-            
+
 def build_tree_from_lists(tree_lists):
     root = None
     node_dict = {}
@@ -281,17 +283,51 @@ def build_tree_from_lists(tree_lists):
 
     return root
 
-
-def add_examples_to_tree(root_node, example_objects):
+def add_examples_to_tree(root_node, example_objects, current_path=""):
     for example in example_objects:
         description = example.description().lower()  # Convert to lowercase
+        added = False
+
         for node in root_node.traverse():
             node_name_lower = node.name.lower()
             if node_name_lower in description or node_name_lower + 's' in description:
+                # Construct the tree path by including the root node at the start
+                path_to_example = root_node.name + " -> " + current_path + " -> " + example.name()
+                example.set_tree_path(path_to_example)
+
+                # Add the example to the node
                 node.add_example(example)
+
+                added = True
                 break  # Exit the inner loop after finding a match
+
+        if not added:
+            # If no matching node is found, add the example to the root node
+            path_to_example = root_node.name + " -> " + example.name()
+            example.set_tree_path(path_to_example)
+            root_node.add_example(example)
+
+    for child in root_node.children:
+        add_examples_to_tree(child, example_objects, current_path=root_node.name)
+
     return root_node
 
+
+
+def get_example_tree_paths(root_node):
+    example_paths = []
+
+    def traverse(node, current_path=""):
+        if node.examples:
+            for example in node.examples:
+                example_path = current_path + " -> " + example.name()
+                example_paths.append((example.name(), example.path(), example.description(), example_path))
+
+        for child in node.children:
+            traverse(child, current_path=current_path + " -> " + child.name)
+
+    traverse(root_node)
+    return example_paths
 
 def print_tree(root_node, indent=''):
     print(f"{indent}{root_node.name}")
@@ -304,7 +340,7 @@ def print_tree(root_node, indent=''):
 
             
     
-if __name__ == "__main__": 
+if __name__ == "__main__":
     methods_path = "cofi/src/cofi/tools"
     applications_path = "espresso/contrib"
     problems_path = "cofi-examples/examples"
@@ -315,12 +351,18 @@ if __name__ == "__main__":
     p._search()
     p.search_examples(ignore_list)
     problems = p.problems()
-    
-    
+
     for method in p._methods:
         tree_lists.append(method.tree())
 
     root_node = build_tree_from_lists(tree_lists)
-    add_examples_to_tree(root_node, problems)
+    root_node = add_examples_to_tree(root_node, problems)
+    
+    example_paths = get_example_tree_paths(root_node)
+    print(len(example_paths))
+    for example_path in example_paths:
+        print("Example Tree Path:", example_path[3])
+        print()
+
     print_tree(root_node)
     
