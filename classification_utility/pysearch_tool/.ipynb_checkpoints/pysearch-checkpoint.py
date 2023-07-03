@@ -4,6 +4,28 @@
 import os
 import ast
 
+def is_legal_node_name(node, level, legal_node_names):
+    # Check if the node is in the legal node names for the given level
+    if level in legal_node_names:
+        return node in legal_node_names[level]
+    
+    return False
+
+def load_legal_names():
+    legal_node_names = {}
+
+    # Read the legal node names from the file
+    with open("legal_node_names.txt", "r") as file:
+        for line in file:
+            line = line.strip()
+            if line:
+                level, names = line.split(":")
+                level = int(level)
+                names = [name.strip() for name in names.split(",")]
+                legal_node_names[level] = names
+    
+    return legal_node_names
+
 class pysearch:
     def __init__(self, methods_path, app_path, prob_path):
         """
@@ -26,70 +48,42 @@ class pysearch:
         self._methods = []
         self._apps = []
         self._problems = []
+        self._legal_names = load_legal_names()
 
     def mds(self):
         return self._methods
     
     def aps(self):
         return self._apps
-
-    def search(self, ignore):
-        # methods = []  # Store the found methods
-        # apps = []  # Store the found apps
-
-        # Inference methods in CoFI
-        for root, _, files in os.walk(self._method_path):
-            for method in files:
-                if method.endswith("-checkpoint.py"):
-                    continue  # Skip temporary checkpoint files
-                if method not in ignore:
-                    method_path = os.path.join(root, method)
-                    with open(method_path) as file:
-                        lines = file.readlines()
-
-                    method_name = ""
-                    method_tree = []
-                    description = ""
-
-                    for line in lines:
-                        line = line.strip()
-                        if line.startswith("# Method : "):
-                            method_name = line[11:]
-                        elif line.startswith("# CoFI"):
-                            method_tree = line[10:].strip().split(" -> ")
-                        elif line.startswith("# description:"):
-                            description = line[15:]
-                    print(method_name)
-                    print(method_tree)
-                    print(description)
-                    self._methods.append(Method(method_name, method_path, method_tree, description))
-        # Inference applications in CoFI
-        for root, dirs, files in os.walk(self._app_path):
-            if root == self._app_path:
-                for dirr in dirs:
-                    if dirr not in ignore:
-                        app_path = self._app_path + '/' + dirr + '/' + dirr + '.py'
-                        r = open(app_path)
-                        if os.path.exists(app_path):
-                            app_name = r.readline().strip('\n')[2:]
-                            app_tree = r.readline().strip('\n')[2:].split(" -> ")
-                            app_des = r.readline().strip('\n')[15:]
-                            self._apps.append(App(app_name, app_path, app_tree, app_des))
-                            print(app_tree)
+    
     
     def _search(self):
+              
 
         def parse(file_path):
+            
+            def print_illegal_node_names(illegal_nodes):
+                if illegal_nodes:
+                    print(f"Illegal node name(s) encountered in {file_path}:")
+                    for level, node_name in illegal_nodes:
+                        print(f"Level {level}: {node_name}")
+                        
             res = []
+            line_number = 0
             with open(file_path) as file:
                 while True:
+                    line_number += 1
                     line = file.readline()
                     if line:
                         if line[0:11] == "# Method : ":
                             method_name = line.strip('\n')[11:]
                             method_tree = file.readline().strip('\n')[2:].split(" -> ")
                             method_description = file.readline().strip('\n')[15:]
-                            method = Method(method_name, file_path, method_tree, method_description)
+                            illegal_nodes = [(i + 1, node) for i, node in enumerate(method_tree) if not is_legal_node_name(node, i + 1, self._legal_names)]
+                            if illegal_nodes:
+                                print_illegal_node_names(illegal_nodes)
+                                raise ValueError(f"Illegal node name(s) encountered in method_tree at line {line_number} in file {file_path}")
+                            method = Method(method_name, file_path, method_tree, method_description)   
                             self._methods.append(method)
                         if line[0:16] == "# Application : ":
                             app_name = line.strip('\n')[16:]
@@ -100,7 +94,7 @@ class pysearch:
                         break
 
 
-        for _, _ , files in os.walk(self._method_path):
+        for _, _, files in os.walk(self._method_path):
             for i in files:
                 parse(self._method_path + '/' + i)
 
@@ -108,7 +102,7 @@ class pysearch:
             if root == self._app_path:
                 for dirr in dirs:
                     parse(self._app_path + '/' + dirr + '/' + dirr + '.py')
-
+                    
     def search_examples(self, ignore):
         for root, _, files in os.walk(self._prob_path):
             for file_name in files:
@@ -359,10 +353,8 @@ if __name__ == "__main__":
     root_node = add_examples_to_tree(root_node, problems)
     
     example_paths = get_example_tree_paths(root_node)
-    print(len(example_paths))
     for example_path in example_paths:
         print("Example Tree Path:", example_path[3])
         print()
 
     print_tree(root_node)
-    
