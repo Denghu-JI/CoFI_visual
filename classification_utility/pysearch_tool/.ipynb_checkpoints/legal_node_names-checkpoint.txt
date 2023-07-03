@@ -1,0 +1,7 @@
+1:CoFI
+2:Parameter Estimation,Ensemble Methods
+3:Optimization,Bayesian Sampling,Matrix Based Solvers
+4:Non-linear,MCMC Sampler,Linear System Solvers
+5:InLab,EMCEE,pytorch.optim,scipy.linalg.lstsq,scipy.optimize.least_squares,scipy.optimize.minimize
+6:Simple Newton Step,Affine Invariant Markov Chain Monte Carlo,Adadelta,Adagrad,Adam,AdamW,SparseAdam,Admx,LBGFGS,NAdam,RMSprop,Rprop,SGD,scipy.optimize.least_squares (trx),scipy.optimize.least_squares (dogbox),scipy.optimize.least_squares (lm),Nelder-Mead,Powell,CG,BFGS,Newton-CG,L-BFGS-B,TNC,COBYLA,SLSQP,trust-constr,trust-exact,trust-keylov,dogleg,trust-ncg
+7:Stretch Move
