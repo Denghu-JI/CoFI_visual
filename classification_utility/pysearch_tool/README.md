@@ -5,6 +5,8 @@ To run the code and perform a search on code repositories, follow the steps belo
 
 Clone the repository or download the code files to your local machine. Link: https://github.com/Denghu-JI/CoFI_visual.git
 
+Navigate to "CoFI_visual\classification_utility\pysearch_tool"
+
 1. Install the required dependencies:
 
 2. Ensure that you have Python installed on your system (Python 3.7 or above is recommended).
@@ -29,6 +31,8 @@ methods_path: The path to the methods directory.
 applications_path: The path to the applications directory.
 problems_path: The path to the problems directory.
 ignore_list: (Optional) If there are any files that you want to exclude from the example search, add their names to this list.
+
+Define the legal node names for each level in legal_node_names.txt
 
 4. Run the code:
 
