@@ -1,75 +1,54 @@
 # pysearch
 pysearch is a Python module that allows you to search and extract information from code files in specified directories. It provides functionality to search for inference methods, applications, and example problems, and organize them in a hierarchical tree structure.
 
-Installation
-To use pysearch, follow these steps:
+To run the code and perform a search on code repositories, follow the steps below:
 
-Clone the repository or download the source code.
-Place the pysearch.py file in your project directory or in a location accessible by your Python scripts.
-Usage
-Initializing pysearch
-To use pysearch, you need to import the module and create an instance of the pysearch class. Here's an example:
+Clone the repository or download the code files to your local machine. Link: https://github.com/Denghu-JI/CoFI_visual.git
 
-```python
-from pysearch import pysearch
+Navigate to "CoFI_visual\classification_utility\pysearch_tool"
 
-# Specify the paths to the method, application, and problem directories
-method_path = "path/to/methods"
-app_path = "path/to/applications"
-prob_path = "path/to/problems"
-# Create an instance of the pysearch class
-p = pysearch(method_path, app_path, prob_path)
+1. Install the required dependencies:
+   
+3. Ensure that you have Python installed on your system (Python 3.7 or above is recommended).
+The code uses standard Python libraries, so no additional external dependencies need to be installed.
 
-```
+4. Set up the directory structure:
 
+Create the following directories to organize your code repositories:
 
-# Searching for Methods and Applications
-You can search for inference methods and applications using the search method. The search method takes an optional ignore parameter, which is a list of files to ignore during the search.
+methods: This directory will contain the files with inference methods.
+applications: This directory will contain the files with applications.
+problems: This directory will contain the example problem files.
+Place your code files in the respective directories based on their type:
 
-Here's an example of searching for methods and applications:
+Inference methods: Place the files with inference methods in the methods directory.
+Applications: Place the files with applications in the applications directory.
+Example problems: Place the example problem files in the problems directory.
+Update the file paths in the code:
 
-```python
-Copy code
-# Search for methods and applications
-ignore_list = ['__init__.py', '_base_inference_tool.py']  # Files to ignore
-p.search(ignore_list)
+Open the config.py file and update the following variables with the correct paths:
+methods_path: The path to the methods directory.
+applications_path: The path to the applications directory.
+problems_path: The path to the problems directory.
+ignore_list: (Optional) If there are any files that you want to exclude from the example search, add their names to this list.
 
-# Retrieve the found methods and applications
-methods = p.mds()  # List of found methods
-applications = p.aps()  # List of found applications
+Define the legal node names for each level in legal_node_names.txt
 
-```
+4. Run the code:
 
-Searching for Example Problems
-You can search for example problems using the search_examples method. Similar to the search method, the search_examples method also takes an optional ignore parameter to ignore specific files during the search.
+Open a terminal or command prompt.
+Navigate to the directory where the code files are located.
+Execute the following command to run the code: python pysearcj.py.
 
-Here's an example of searching for example problems:
+5. View the results:
 
-python
-Copy code
-# Search for example problems
-p.search_examples(ignore_list)
+After executing the code, it will perform the search and organize the code repositories.
+The example tree paths will be printed, showing the hierarchy of examples within the tree structure.
+The entire tree structure will be printed, displaying the methods, applications, and example problems in a hierarchical format.
 
-# Retrieve the found example problems
-problems = p.problems()  # List of found example problems
-Building and Printing the Tree Structure
-After searching for methods, applications, and example problems, you can build a hierarchical tree structure using the build_tree_from_lists function. This function takes a list of tree paths and returns the root node of the tree.
+6. Customize and extend the code (optional):
 
-Here's an example of building and printing the tree structure:
-
-python
-Copy code
-# Build the tree structure
-tree_lists = []
-for method in methods:
-    tree_lists.append(method.tree())
-root_node = build_tree_from_lists(tree_lists)
-
-# Add example problems to the tree nodes
-root_node = add_examples_to_tree(root_node, problems)
-
-# Print the tree structure
-print_tree(root_node)
-The print_tree function will print the tree structure along with the example problems associated with each node.
+You can modify the code to suit your specific requirements.
+For example, you can add additional functionality to parse different types of code files or enhance the search algorithm.
 
 
