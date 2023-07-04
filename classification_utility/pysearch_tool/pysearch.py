@@ -3,6 +3,7 @@
 #(might delete if never used) import pathlib
 import os
 import ast
+from config import methods_path, applications_path, problems_path, ignore_list
 
 def is_legal_node_name(node, level, legal_node_names):
     # Check if the node is in the legal node names for the given level
@@ -89,7 +90,7 @@ class pysearch:
                             app_name = line.strip('\n')[16:]
                             app_tree = file.readline().strip('\n')[2:].split(" -> ")
                             app_des = file.readline().strip('\n')[15:]
-                            self._apps.append(App(app_name, file_path, app_tree, app_des))                    
+                            self._apps.append(App(app_name, file_path, app_tree, app_des))
                     else:
                         break
 
@@ -335,10 +336,6 @@ def print_tree(root_node, indent=''):
             
     
 if __name__ == "__main__":
-    methods_path = "cofi/src/cofi/tools"
-    applications_path = "espresso/contrib"
-    problems_path = "cofi-examples/examples"
-    ignore_list = ['__init__.py', '_base_inference_tool.py']
     tree_lists = []
 
     p = pysearch(methods_path, applications_path, problems_path)
