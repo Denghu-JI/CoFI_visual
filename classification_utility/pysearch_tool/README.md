@@ -8,11 +8,11 @@ Clone the repository or download the code files to your local machine. Link: htt
 Navigate to "CoFI_visual\classification_utility\pysearch_tool"
 
 1. Install the required dependencies:
-
-2. Ensure that you have Python installed on your system (Python 3.7 or above is recommended).
+   
+3. Ensure that you have Python installed on your system (Python 3.7 or above is recommended).
 The code uses standard Python libraries, so no additional external dependencies need to be installed.
 
-3. Set up the directory structure:
+4. Set up the directory structure:
 
 Create the following directories to organize your code repositories:
 
