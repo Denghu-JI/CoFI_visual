@@ -5,6 +5,10 @@ To run the code and perform a search on code repositories, follow the steps belo
 
 Clone the repository or download the code files to your local machine. Link: https://github.com/Denghu-JI/CoFI_visual.git
 
+```console
+git clone https://github.com/Denghu-JI/CoFI_visual.git
+```
+
 Navigate to "CoFI_visual\classification_utility\pysearch_tool"
 
 1. Install the required dependencies:
