@@ -36,13 +36,19 @@ applications_path: The path to the applications directory.
 problems_path: The path to the problems directory.
 ignore_list: (Optional) If there are any files that you want to exclude from the example search, add their names to this list.
 
+This is done in config.py
+
 Define the legal node names for each level in legal_node_names.txt
 
 4. Run the code:
 
 Open a terminal or command prompt.
 Navigate to the directory where the code files are located.
-Execute the following command to run the code: python pysearcj.py.
+Execute the following command to run the code: 
+
+```console
+python pysearch.py
+```
 
 5. View the results:
 
