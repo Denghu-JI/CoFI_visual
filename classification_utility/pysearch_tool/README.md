@@ -38,6 +38,10 @@ ignore_list: (Optional) If there are any files that you want to exclude from the
 
 This is done in config.py
 
+All paths are included in the repository.
+
+However, if they must be changed, the paths must be downloaded and installed in "CoFI_visual\classification_utility\pysearch_tool".
+
 Define the legal node names for each level in legal_node_names.txt
 
 4. Run the code:
