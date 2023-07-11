@@ -3,7 +3,7 @@
 #(might delete if never used) import pathlib
 import os
 import ast
-from config import methods_path, applications_path, problems_path, ignore_list
+from config import methods_path, applications_path, problems_path, ignore_list, valid_name
 
 def is_legal_node_name(node, level, legal_node_names):
     # Check if the node is in the legal node names for the given level
@@ -91,6 +91,9 @@ class pysearch:
                             app_tree = file.readline().strip('\n')[2:].split(" -> ")
                             app_des = file.readline().strip('\n')[15:]
                             self._apps.append(App(app_name, file_path, app_tree, app_des))
+                             
+                            for app in self._apps:
+                                print(app.tree())
                     else:
                         break
 
@@ -335,7 +338,7 @@ def print_tree(root_node, indent=''):
 
             
     
-if __name__ == "__main__":
+if __name__ == valid_name:
     tree_lists = []
 
     p = pysearch(methods_path, applications_path, problems_path)
