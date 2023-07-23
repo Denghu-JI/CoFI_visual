@@ -131,16 +131,6 @@ class pysearch:
 
     
     def _search(self):
-        
-        # def _is_legal_anzsrc(node_name, parent, level, legal_anzsrc_names):
-        #     if level == 1:
-        #         return node_name in legal_anzsrc_names
-        #     else:
-        #         parent_code = int(parent.split()[0])  # Extract the code from the parent node
-        #         return (
-        #         parent_code in legal_anzsrc_names and
-        #         node_name in legal_anzsrc_names[parent_code]
-        #         )
 
         def parse(file_path):
             res = []
