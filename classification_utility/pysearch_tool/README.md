@@ -5,6 +5,10 @@ To run the code and perform a search on code repositories, follow the steps belo
 
 Clone the repository or download the code files to your local machine. Link: https://github.com/Denghu-JI/CoFI_visual.git
 
+```console
+git clone https://github.com/Denghu-JI/CoFI_visual.git
+```
+
 Navigate to "CoFI_visual\classification_utility\pysearch_tool"
 
 1. Install the required dependencies:
@@ -32,13 +36,23 @@ applications_path: The path to the applications directory.
 problems_path: The path to the problems directory.
 ignore_list: (Optional) If there are any files that you want to exclude from the example search, add their names to this list.
 
+This is done in config.py
+
+All paths are included in the repository.
+
+However, if they must be changed, the paths must be downloaded and installed in "CoFI_visual\classification_utility\pysearch_tool".
+
 Define the legal node names for each level in legal_node_names.txt
 
 4. Run the code:
 
 Open a terminal or command prompt.
 Navigate to the directory where the code files are located.
-Execute the following command to run the code: python pysearcj.py.
+Execute the following command to run the code: 
+
+```console
+python pysearch.py
+```
 
 5. View the results:
 
